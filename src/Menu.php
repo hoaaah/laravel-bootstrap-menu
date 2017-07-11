@@ -25,7 +25,7 @@ class Menu {
         $render = '<div class="'.$this->divClass.'"><ul class="'.$this->ulClass.'" id="'.$this->ulId.'">';
         foreach($params['items'] as $items){
             // echo $items['label'];
-            if(!isset($items['visible']) || $items['visible'] == true) $render .= $this->renderItems($items);
+            if($this->isVisible($items)) $render .= $this->renderItems($items);
         }
         $render .= '</ul></div>';
         echo $render;
@@ -44,20 +44,25 @@ class Menu {
             $render.= '<ul class="nav nav-second-level collapse">';
             foreach($item['items'] as $item)
             {
-                if(!isset($item['visible']) || $item['visible'] == true){
+                // if(!isset($item['visible']) || $item['visible'] == true){
+                if($this->isVisible($item)){
                     if(isset($item['items'])){
                         $render .= '<li><a href="#"><i class="'.$this->icon.'"></i> '.$item['label'].'<i class="fa fa-angle-right pull-right"></i></a>';
                         $render.= '<ul class="nav nav-third-level">';
                         foreach($item['items'] as $item2){
-                            $render .= '<li>';
-                            $render .= $this->renderItem($item2);
-                            $render .= '</li>';
+                             if($this->isVisible($item2)){
+                                $render .= '<li>';
+                                $render .= $this->renderItem($item2);
+                                $render .= '</li>';
+                             }
                         }
                         $render .='</ul></li>';
                     }else{
-                        $render .= '<li>';
-                        $render .= $this->renderItem($item);
-                        $render .= '</li>';
+                        if($this->isVisible($item)){
+                            $render .= '<li>';
+                            $render .= $this->renderItem($item);
+                            $render .= '</li>';
+                        }
                     }
 
                 }
@@ -105,5 +110,13 @@ class Menu {
         // return false;
         // return 'class="active"';
         return '';
+    }
+
+    protected function isVisible($item){
+        if(isset($item['visible']) && $item['visible'] == false ){
+            return false;
+        }else{
+            return true;
+        }
     }
 }
