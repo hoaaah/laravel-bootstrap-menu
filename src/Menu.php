@@ -11,15 +11,16 @@ class Menu {
     public $thirdLevelClass = "nav-third-level";
     public $activeClass = "active";
     public $linkTemplate = '<a href="{url}">{icon} {label}</a>';
-    public $defaultIconHtml = '<i class="fa fa-circle-o"></i> ';
+    public $defaultIconHtml = 'fa fa-circle-o';
     public $homeUrl = '';
     public $icon;
 
     public function render($params){
         if(isset($params['options'])){
-            if($options['divClass']) $this->divClass = $options['divClass'];
-            if($options['ulClass']) $this->ulClass = $options['ulClass'];
-            if($options['ulId']) $this->ulId = $options['ulId'];
+            $options = $params['options'];
+            if(isset($options['divClass'])) $this->divClass = $options['divClass'];
+            if(isset($options['ulClass'])) $this->ulClass = $options['ulClass'];
+            if(isset($options['ulId'])) $this->ulId = $options['ulId'];
         }
         $render = '<div class="'.$this->divClass.'"><ul class="'.$this->ulClass.'" id="'.$this->ulId.'">';
         foreach($params['items'] as $items){
