@@ -3,63 +3,106 @@ namespace hoaaah\LaravelMenu;
 
 use Illuminate\Support\Facades\Request;
 
-class Breadcrumb {
+class Menu {
     public $divClass = 'sidebar-nav navbar-collapse';
+    public $ulClass = 'nav';
+    public $ulId = 'side-menu';
     public $secondLevelClass = "nav-second-level";
     public $thirdLevelClass = "nav-third-level";
     public $activeClass = "active";
     public $linkTemplate = '<a href="{url}">{icon} {label}</a>';
-    public $defaultIconHtml = '<i class="fa fa-circle-o"></i> ';    
+    public $defaultIconHtml = '<i class="fa fa-circle-o"></i> ';
     public $homeUrl = '';
+    public $icon;
 
-    public static function render($params){
-        $render = '<div class="'.$this->divClass.'">
-                        <ul class="nav in">';
+    public function render($params){
+        if(isset($params['options'])){
+            if($options['divClass']) $this->divClass = $options['divClass'];
+            if($options['ulClass']) $this->ulClass = $options['ulClass'];
+            if($options['ulId']) $this->ulId = $options['ulId'];
+        }
+        $render = '<div class="'.$this->divClass.'"><ul class="'.$this->ulClass.'" id="'.$this->ulId.'">';
         foreach($params['items'] as $items){
-
+            // echo $items['label'];
+            if(!isset($items['visible']) || $items['visible'] == true) $render .= $this->renderItems($items);
         }
         $render .= '</ul></div>';
         echo $render;
     }
 
-    public function renderItem($item){
-        if(!$this->icon) $this->icon = $defaultIconHtml;
+    public function renderItems($item){
+        if(!isset($item['icon'])){
+            $this->icon = $this->defaultIconHtml;
+        }else{
+            $this->icon = $item['icon'];
+        }
+        // $isActive = $this->isItemActive($item['url']);
         $render = '<li>';
-        $render .= '<a href="'.$item->url.'" '.$isActive.' > <i class="'.$this->icon.'" <a/>'
-        if($item->items){
-            
+        if(isset($item['items'])){
+            $render .= '<a href="#"><i class="'.$this->icon.'"></i> '.$item['label'].'<i class="fa fa-angle-right pull-right"></i></a>';
+            $render.= '<ul class="nav nav-second-level collapse">';
+            foreach($item['items'] as $item)
+            {
+                if(!isset($item['visible']) || $item['visible'] == true){
+                    if(isset($item['items'])){
+                        $render .= '<li><a href="#"><i class="'.$this->icon.'"></i> '.$item['label'].'<i class="fa fa-angle-right pull-right"></i></a>';
+                        $render.= '<ul class="nav nav-third-level">';
+                        foreach($item['items'] as $item2){
+                            $render .= '<li>';
+                            $render .= $this->renderItem($item2);
+                            $render .= '</li>';
+                        }
+                        $render .='</ul></li>';
+                    }else{
+                        $render .= '<li>';
+                        $render .= $this->renderItem($item);
+                        $render .= '</li>';
+                    }
+
+                }
+            }
+            $render .='</ul>';
+        }else{
+            $render .= $this->renderItem($item);
         }
         $render .= '</li>';
+
+        return $render;
     }
 
-    public function begin(){
-        $urlUnique = NULL;
-        foreach(Request::segments() as $segments){
-            $urlUnique .= '/'.$segments;
-        }
-        if($urlUnique != '/') {
-            echo '
-            <ul class="breadcrumb">
-                <i class="fa fa-home"></i>
-                <li><a href="/'.$this->homeUrl.'">Home</a></li>';
-        }ELSE{
-            echo '';
-        }
-    }
-
-    public function add($params){
-        if(!array_key_exists('url', $params)){
-            $params['url'] = '';
-            $tag = 'span';
+    public function renderItem($item){
+        if(!isset($item['icon'])){
+            $this->icon = $this->defaultIconHtml;
         }else{
-            $params['url'] = 'href="'.url($params['url']).'"';
-            $tag = 'a';
+            $this->icon = $item['icon'];
         }
-        if(!array_key_exists('label', $params)) $params['label'] = 'Use label params!';
-        echo '<li><'.$tag.' '.$params['url'].' >'.$params['label'].'</'.$tag.'></li>';
+        $isActive = $this->isItemActive($item['url']);
+        return '<a href="'.url($item['url']).'" '.$isActive.' > <i class="'.$this->icon.'"></i> '.$item['label'].'</a>';
     }
 
-    public function end(){
-        echo '</ul>';
+    protected function isItemActive($item)
+    {
+        // if (isset($item['url']) && is_array($item['url']) && isset($item['url'][0])) {
+        //     $route = $item['url'][0];
+        //     if ($route[0] !== '/' && Yii::$app->controller) {
+        //         $route = ltrim(Yii::$app->controller->module->getUniqueId() . '/' . $route, '/');
+        //     }
+        //     $route = ltrim($route,'/');
+        //     if ($route != $this->route && $route !== $this->noDefaultRoute && $route !== $this->noDefaultAction) {
+        //         return false;
+        //     }
+        //     unset($item['url']['#']);
+        //     if (count($item['url']) > 1) {
+        //         foreach (array_splice($item['url'], 1) as $name => $value) {
+        //             if ($value !== null && (!isset($this->params[$name]) || $this->params[$name] != $value)) {
+        //                 return false;
+        //             }
+        //         }
+        //     }
+        //     return true;
+        // }
+        // return false;
+        // return 'class="active"';
+        return '';
     }
 }
