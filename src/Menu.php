@@ -2,6 +2,7 @@
 namespace hoaaah\LaravelMenu;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Route;
 
 class Menu {
     public $divClass = 'sidebar-nav navbar-collapse';
@@ -82,34 +83,22 @@ class Menu {
         }else{
             $this->icon = $item['icon'];
         }
-        $isActive = $this->isItemActive($item['url']);
+        $isActive = $this->isItemActive($item);
         return '<a href="'.url($item['url']).'" '.$isActive.' > <i class="'.$this->icon.'"></i> '.$item['label'].'</a>';
     }
 
     protected function isItemActive($item)
     {
-        // if (isset($item['url']) && is_array($item['url']) && isset($item['url'][0])) {
-        //     $route = $item['url'][0];
-        //     if ($route[0] !== '/' && Yii::$app->controller) {
-        //         $route = ltrim(Yii::$app->controller->module->getUniqueId() . '/' . $route, '/');
-        //     }
-        //     $route = ltrim($route,'/');
-        //     if ($route != $this->route && $route !== $this->noDefaultRoute && $route !== $this->noDefaultAction) {
-        //         return false;
-        //     }
-        //     unset($item['url']['#']);
-        //     if (count($item['url']) > 1) {
-        //         foreach (array_splice($item['url'], 1) as $name => $value) {
-        //             if ($value !== null && (!isset($this->params[$name]) || $this->params[$name] != $value)) {
-        //                 return false;
-        //             }
-        //         }
-        //     }
-        //     return true;
+        /*
+        * in this method we check if our current uri contain our set item url
+        * this method no work with our project, maybe use controller instead
+        */
+        // $uri = '/'.Route::current()->uri;
+        // if(isset($item['url']) && strpos($uri, $item['url'])){
+        //     return 'class="active"';
+        // }else{
+            return '';
         // }
-        // return false;
-        // return 'class="active"';
-        return '';
     }
 
     protected function isVisible($item){
