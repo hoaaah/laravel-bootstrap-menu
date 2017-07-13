@@ -92,6 +92,12 @@ class Menu {
         /*
         * in this method we check if our current uri contain our set item url
         * this method no work with our project, maybe use controller instead
+        $action = Route::current();
+        $action = explode('\\', $action->action['controller']);
+        $action = end($action);
+        $action = explode('@', $action);
+        $action = $action[0];
+        var_dump($action);
         */
         // $uri = '/'.Route::current()->uri;
         // if(isset($item['url']) && strpos($uri, $item['url'])){
