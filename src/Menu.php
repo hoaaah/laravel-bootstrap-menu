@@ -41,8 +41,13 @@ class Menu {
         // $isActive = $this->isItemActive($item['url']);
         $render = '<li>';
         if(isset($item['items'])){
+            $isActive = '';
+            foreach($item['items'] as $ddItem){
+                if(isset($ddItem['url']) && $this->isDropdownActive($ddItem['url']) == 'in') $isActive = 'in';
+                $isActive .=$isActive;
+            }            
             $render .= '<a href="#"><i class="'.$this->icon.'"></i> '.$item['label'].'<i class="fa fa-angle-right pull-right"></i></a>';
-            $render.= '<ul class="nav nav-second-level collapse">';
+            $render.= '<ul class="nav nav-second-level '.$isActive.'">';
             foreach($item['items'] as $item)
             {
                 // if(!isset($item['visible']) || $item['visible'] == true){
@@ -112,6 +117,32 @@ class Menu {
             return '';
         // }
     }
+
+    protected function isDropdownActive($url)
+    {
+        /*
+        // get current controller
+        $action = Route::current();
+        $action = explode('\\', $action->action['controller']);
+        $action = end($action);
+        $action = explode('@', $action);
+        $currentAction = $action[0];
+
+        // get item controller
+        $request = Request::create($url, 'GET');
+        $route = Route::getRoutes()->match($request);
+        $given = $route->getActionName();
+        $given = explode('\\', $given);
+        $given = end($given);
+        $given = explode('@', $given);
+        $itemAction = $given[0];        
+        if($currentAction == $itemAction ){
+            return 'in';
+        }else{
+        */
+            return '';
+        // }
+    }    
 
     protected function isVisible($item){
         if(isset($item['visible']) && $item['visible'] == false ){
